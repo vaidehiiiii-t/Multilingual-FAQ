@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FAQ App</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Quill.js CDN -->
+    <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+    <link
+      href="https://cdn.quilljs.com/1.3.6/quill.snow.css"
+      rel="stylesheet"
+    />
+    
+    <style>
+      .ql-container {
+        height: 200px;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-100 font-sans">
+    <div class="container mx-auto p-6">
+      <h1 class="text-4xl font-bold text-center text-gray-800 mb-6">
+        FAQ Management
+      </h1>
+
+      <!-- Add FAQ Section -->
+      <div class="bg-white p-6 rounded-lg shadow-lg mb-8">
+        <h2 class="text-2xl font-semibold text-gray-800 mb-4">Add New FAQ</h2>
+        <form id="add-faq-form">
+          <div class="mb-4">
+            <label for="question" class="block text-lg text-gray-600"
+              >Question:</label
+            >
+            <input
+              type="text"
+              id="question"
+              name="question"
+              class="w-full p-2 border border-gray-300 rounded-md"
+              required
+            />
+          </div>
+
+          <div class="mb-4">
+            <label for="answer" class="block text-lg text-gray-600"
+              >Answer:</label
+            >
+            <div
+              id="answer"
+              class="bg-gray-50 p-2 border border-gray-300 rounded-md"
+            ></div>
+          </div>
+
+          <button
+            type="submit"
+            class="w-full bg-blue-500 text-white p-3 rounded-md hover:bg-blue-600 transition duration-300"
+          >
+            Add FAQ
+          </button>
+        </form>
+      </div>
+
+      <!-- FAQs List Section -->
+      <h2 class="text-2xl font-semibold text-gray-800 mb-4">FAQs</h2>
+      <div id="faq-list" class="space-y-4">
+        <!-- FAQs will be loaded here dynamically -->
+      </div>
+    </div>
+
+    <script>
+      // Initialize Quill.js for the WYSIWYG editor
+      var quill = new Quill("#answer", {
+        theme: "snow",
+      });
+
+      // Handle form submission
+      document
+        .getElementById("add-faq-form")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+
+          const question = document.getElementById("question").value;
+          const answer = quill.root.innerHTML; // Get the HTML content from the WYSIWYG editor
+
+          // Send the FAQ data to the backend
+          fetch("http://localhost:5000/api/faqs/add", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ question, answer }),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              alert(data.message);
+              loadFAQs(); // Reload FAQs after adding a new one
+            })
+            .catch((err) => console.error("Error adding FAQ:", err));
+        });
+
+      // Load FAQs
+      function loadFAQs() {
+        fetch("http://localhost:5000/api/faqs")
+          .then((response) => response.json())
+          .then((faqs) => {
+            const faqList = document.getElementById("faq-list");
+            console.log(faqList);
+            faqList.innerHTML = ""; // Clear previous FAQs
+            faqs.forEach((faq) => {
+              const faqElement = document.createElement("div");
+              faqElement.classList.add("bg-white", "p-6", "rounded-lg", "shadow-lg");
+              faqElement.innerHTML = `
+                <div class="font-semibold text-xl text-gray-800 mb-2">${faq.question}</div>
+                <div class="text-gray-700">${faq.answer}</div>
+                <button onclick="editFaq('${faq.id}')" class="bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-yellow-600">Edit</button>
+                <button onclick="deleteFaq('${faq.id}')" class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600">Delete</button>
+              `;
+              faqList.appendChild(faqElement);
+            });
+          })
+          .catch((err) => console.error("Error fetching FAQs:", err));
+      }
+
+     
+
+      loadFAQs(); // Initial load of FAQs
+      function editFaq(id) {
+        const newQuestion = prompt("Enter updated question:");
+        const newAnswer = prompt("Enter updated answer:");
+        if (newQuestion && newAnswer) {
+          fetch(`/api/faq/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ question: newQuestion, answer: newAnswer })
+          }).then(() => loadFAQs());
+        }
+      }
+
+      function deleteFaq(id) {
+        if (confirm("Are you sure you want to delete this FAQ?")) {
+          fetch(`/api/faq/${id}`, { method: 'DELETE' })
+            .then(() => loadFAQs());
+        }
+      }
+    </script>
+    
+  </body>
+</html>
