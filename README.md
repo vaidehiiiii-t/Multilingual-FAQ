@@ -18,7 +18,7 @@ This project is a _FAQ Management System_ that allows users to _Create, Read, Up
 
 1. _Clone the Repository:_
    sh
-   git clone https://github.com/your-username/faq-management.git
+   git clone https://github.com/vaidehiiiii-t/Multilingual-FAQ.git
    cd faq-management
 
 2. _Install Dependencies:_
