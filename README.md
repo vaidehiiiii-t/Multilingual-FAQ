@@ -17,19 +17,25 @@ This project is a _FAQ Management System_ that allows users to _Create, Read, Up
 ## Installation Steps
 
 1. _Clone the Repository:_
-   sh
+
+   ```sh
    git clone https://github.com/vaidehiiiii-t/Multilingual-FAQ.git
    cd faq-management
+   ```
 
 2. _Install Dependencies:_
-   sh
-   npm install
+
+```sh
+ npm install
+```
 
 3. _Start the Server:_
-   sh
+
+   ```sh
    npm start
 
    The server will run on http://localhost:5000.
+   ```
 
 4. _Run the Frontend:_
    Open public/index.html in a browser.
@@ -40,7 +46,7 @@ This project is a _FAQ Management System_ that allows users to _Create, Read, Up
 
 ### _1. Get All FAQs_
 
-sh
+```sh
 GET /api/faqs
 
 _Response:_
@@ -52,31 +58,35 @@ json
 "answer": "This is a FAQ management system."
 }
 ]
+```
 
 ### _2. Add a New FAQ_
 
-sh
+```sh
 POST /api/faqs/add
 Content-Type: application/json
 {
 "question": "How does it work?",
 "answer": "Users can add, edit, and delete FAQs."
 }
+```
 
 ### _3. Update an FAQ_
 
-sh
+```sh
 PUT /api/faq/:id
 Content-Type: application/json
 {
 "question": "Updated Question?",
 "answer": "Updated Answer."
 }
+```
 
 ### _4. Delete an FAQ_
 
-sh
+```sh
 DELETE /api/faq/:id
+```
 
 ---
 
